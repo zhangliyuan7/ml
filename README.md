@@ -1,2 +1,4 @@
 # ml
-### lesson 01
+### npl homeworks
+####lesson1 random sentence
+####lesson2 bfs subway route
