@@ -182,7 +182,7 @@ def geo_distance(origin, destination):
 	return c
 
 
-def get_geo_distance(site1, site2):
+def get_geo_distance(site1, site2,site_location):
 	print(tuple(site_location[site1]), tuple(site_location[site2]))
 	return geo_distance(tuple(site_location[site1]), tuple(site_location[site2]))
 
@@ -207,11 +207,9 @@ from matplotlib.font_manager import FontProperties
 
 import collections
 
-site_connection = collections.defaultdict(list)
-
-
 ##转换线路站点site信息 使成为 site_connection[站点:[相邻的站点...]...]的结构
-def values_sort():
+def values_sort(site):
+	site_connection = collections.defaultdict(list)
 	for values in site.values():
 		for x in range(len(values) - 1):
 			if x == 0:
@@ -222,7 +220,7 @@ def values_sort():
 					site_connection[values[x]].append(values[x + 1])
 				if values[x - 1] not in site_connection[values[x]]:
 					site_connection[values[x]].append(values[x - 1])
-
+	return site_connection
 
 def bfs(graph, start, end):
 	visited = [start]
@@ -268,7 +266,8 @@ def search(start, dest, connection_graph):
 
 
 def main():
-	values_sort()
+	#site,site_location=spider()
+	site_connection=values_sort(site)
 	print(bfs(site_connection, '回龙观东大街', '人民大学'))
 	ways = search('回龙观东大街', '北土城', site_connection)
 	print(ways)
@@ -277,7 +276,7 @@ def main():
 	for way in ways:
 		distance = 0
 		for i in range(len(way) - 2):
-			distance += get_geo_distance(way[i], way[i + 1])
+			distance += get_geo_distance(way[i], way[i + 1],site_location)
 		distance_list.append(distance)
 
 		if len(way) < len(least_transfer_way):
