@@ -10,46 +10,55 @@ import requests
 import re
 import time
 
-# url = "http://bj.bendibao.com"
-# headers = {
-# 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-# 	'Accept-Encoding': 'gzip, deflate, br',
-# 	'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-# 	'Connection': 'keep-alive',
-# 	# 'Host': 'baike.baidu.com',
-# 	'Cookie': '0',
-# 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
-# 	'Upgrade-Insecure-Requests': '1',
-# }
-# response = requests.get(url+'/ditie/linemap.shtml',headers=headers)
-# content=response.content.decode('utf-8')
-# line_pattern=re.compile(r'<strong><a href="(/ditie/.*?.shtml)" target="_blank">([\u4e00-\u9fa5]+\d+[\u4e00-\u9fa5]+).*?</a></strong>')
-# line_result=re.findall(line_pattern,content)
-# site_pattern = re.compile(r'<a.*?class="link".*?>([\u4e00-\u9fa5]+)</a>')
-# sites={}
-# for line in line_result:
-# 	response=requests.get(url+line[0],headers=headers)
-# 	content=response.content.decode('utf-8')
-# 	sites[line[1]]=re.findall(site_pattern,content)
 
-# print(sites)
+def spider():
+	url = "http://bj.bendibao.com"
+	headers = {
+		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+		'Accept-Encoding': 'gzip, deflate, br',
+		'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+		'Connection': 'keep-alive',
+		# 'Host': 'baike.baidu.com',
+		'Cookie': '0',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+		'Upgrade-Insecure-Requests': '1',
+	}
+	response = requests.get(url + '/ditie/linemap.shtml', headers=headers)
+	content = response.content.decode('utf-8')
+	line_pattern = re.compile(
+		r'<strong><a href="(/ditie/.*?.shtml)" target="_blank">([\u4e00-\u9fa5]+\d+[\u4e00-\u9fa5]+).*?</a></strong>')
+	line_result = re.findall(line_pattern, content)
+	site_pattern = re.compile(r'<a.*?class="link".*?>([\u4e00-\u9fa5]+)</a>')
+	sites = {}
+	for line in line_result:
+		response = requests.get(url + line[0], headers=headers)
+		content = response.content.decode('utf-8')
+		sites[line[1]] = re.findall(site_pattern, content)
 
-# location_search_url='http://api.map.baidu.com/geocoder?address={}&output=json&key=37492c0ee6f924cb5e934fa08c6b1676&city=%E5%8C%97%E4%BA%AC%E5%B8%82'
-# site_location={}
-# for site in sites:
-# 	for location in sites[site]:
-# 		time.sleep(1)
-# 		r=requests.get(location_search_url.format(location),headers=headers)
-# 		json_dict=r.json()
-# 		if json_dict["status"]=="OK":
-# 			if len(json_dict["result"])!=0:
-# 				site_location[location] = (json_dict["result"]["location"]["lng"], json_dict["result"]["location"]["lat"])
-# 			else:
-# 				site_location[location] = ("100", "100")
-#
-# 			# 	print(location)
-# 			# 	break
-# 			#
+	# print(sites)
+
+	location_search_url = 'http://api.map.baidu.com/geocoder?address={}&output=json&key=37492c0ee6f924cb5e934fa08c6b1676&city=%E5%8C%97%E4%BA%AC%E5%B8%82'
+	site_location = {}
+	for site in sites:
+		for location in sites[site]:
+			time.sleep(1)
+			r = requests.get(location_search_url.format(location), headers=headers)
+			json_dict = r.json()
+			if json_dict["status"] == "OK":
+				if len(json_dict["result"]) != 0:
+					site_location[location] = (
+					json_dict["result"]["location"]["lng"], json_dict["result"]["location"]["lat"])
+				else:
+					site_location[location] = (116.000001, 40.000001)
+
+			# 	print(location)
+			# 	break
+			#
+	return site, site_location
+
+
+##地铁站经纬度 部分地点手动修正 API没有值（动物园，潞城，首经贸，枣庄，化工，草房等）大部分是接口返回值
+##
 site_location = {'苹果园': [116.189634, 39.934641], '古城': [100.23248, 26.883162], '八角游乐园': [116.218842, 39.913065],
 				 '八宝山': [116.243273, 39.920912], '玉泉路': [116.259636, 39.921884], '五棵松': [116.282178, 39.941871],
 				 '万寿路': [116.301316, 39.916633], '公主坟': [116.194292, 39.810747], '军事博物馆': [116.330782, 39.915601],
@@ -66,7 +75,7 @@ site_location = {'苹果园': [116.189634, 39.934641], '古城': [100.23248, 26.
 				 '安河桥北': [116.276563, 40.019218], '北宫门': [116.281372, 40.009166], '西苑': [116.292194, 40.002159],
 				 '圆明园': [116.303374, 40.015009], '北京大学东门': [116.322123, 39.997986], '中关村': [116.344895, 39.98727],
 				 '海淀黄庄': [116.323948, 39.982301], '人民大学': [116.327792, 39.973539], '魏公村': [116.328927, 39.96029],
-				 '国家图书馆': [116.330736, 39.948999], '动物园': ['100', '100'], '新街口': [116.376298, 39.951552],
+				 '国家图书馆': [116.330736, 39.948999], '动物园': [116.000001, 40.000001], '新街口': [116.376298, 39.951552],
 				 '平安里': [116.375904, 39.93743], '西四': [116.375239, 39.931991], '灵境胡同': [116.385402, 39.920665],
 				 '菜市口': [116.37963, 39.89629], '陶然亭': [116.38174, 39.884035], '北京南站': [116.384898, 39.871343],
 				 '马家堡': [116.384454, 39.848934], '角门西': [116.377657, 39.852308], '公益西桥': [116.376253, 39.837153],
@@ -85,17 +94,17 @@ site_location = {'苹果园': [116.189634, 39.934641], '古城': [100.23248, 26.
 				 '北海北': [109.126533, 21.486836], '南锣鼓巷': [116.409524, 39.942648], '东大桥': [116.45853, 39.929006],
 				 '呼家楼': [116.470752, 39.925326], '金台路': [116.484674, 39.92498], '十里堡': [116.509557, 39.921067],
 				 '青年路': [116.522719, 39.960801], '褡裢坡': [116.569397, 39.928846], '黄渠': [116.575224, 39.930072],
-				 '常营': [116.58837, 39.933995], '草房': ['100', '100'], '物资学院路': [116.645993, 39.928854],
+				 '常营': [116.58837, 39.933995], '草房': [116.622546, 39.930673], '物资学院路': [116.645993, 39.928854],
 				 '通州北关': [116.660726, 39.925898], '北运河西': [116.754103, 39.873586], '郝家府': [116.725215, 39.907673],
-				 '东夏园': [116.749089, 39.903107], '潞城': ['100', '100'], '北京西站': [116.327694, 39.903473],
+				 '东夏园': [116.749089, 39.903107], '潞城': [116.754799, 39.90889], '北京西站': [116.327694, 39.903473],
 				 '湾子': [116.333131, 39.895712], '达官营': [116.347996, 39.895496], '广安门内': [116.376708, 39.899212],
 				 '虎坊桥': [116.393653, 39.894439], '珠市口': [116.406109, 39.897542], '桥湾': [116.415142, 39.899084],
 				 '广渠门内': [116.435477, 39.899209], '广渠门外': [116.49167, 39.898773], '双井': [116.45556, 39.904957],
 				 '九龙山': [116.054634, 39.958654], '大郊亭': [116.497375, 39.894153], '百子湾': [116.480353, 39.906907],
-				 '化工': ['100', '100'], '南楼梓庄': [116.497188, 39.881395], '欢乐谷景区': [116.496648, 39.872999],
-				 '垡头': [116.522126, 39.864712], '双合': ['100', '100'], '焦化厂': [116.538157, 39.862384],
+				 '化工': [116.510091, 39.893222], '南楼梓庄': [116.497188, 39.881395], '欢乐谷景区': [116.496648, 39.872999],
+				 '垡头': [116.522126, 39.864712], '双合': [116.533265, 39.866414], '焦化厂': [116.538157, 39.862384],
 				 '朱辛庄': [116.308545, 40.098752], '育知路': [116.335088, 40.084853], '平西府': [116.37599, 40.105565],
-				 '回龙观东大街': [116.367616, 40.086892], '霍营': [116.379708, 40.085384], '育新': ['100', '100'],
+				 '回龙观东大街': [116.367616, 40.086892], '霍营': [116.379708, 40.085384], '育新': [116.353997, 40.066124],
 				 '西小口': [116.355423, 40.054046], '永泰庄': [116.226477, 40.124017], '林萃桥': [116.382609, 40.02879],
 				 '森林公园南门': [116.204771, 39.973174], '奥林匹克公园': [116.399127, 40.00121], '奥体中心': [116.400195, 39.992095],
 				 '北土城': [116.400623, 39.983231], '安华桥': [116.401461, 39.974291], '什刹海': [116.380751, 39.952105],
@@ -110,16 +119,16 @@ site_location = {'苹果园': [116.189634, 39.934641], '古城': [100.23248, 26.
 				 '劲松': [116.457353, 39.888495], '潘家园': [116.4568, 39.883743], '十里河': [116.450961, 39.875618],
 				 '分钟寺': [116.459899, 39.863038], '成寿寺': [116.443454, 39.858582], '石榴庄': [116.433628, 39.847381],
 				 '大红门': [116.423417, 39.807916], '角门东': [116.396398, 39.854743], '草桥': [116.309674, 39.99305],
-				 '纪家庙': [116.353416, 39.827359], '首经贸': ['100', '100'], '丰台站': [116.295648, 39.854462],
-				 '泥洼': ['100', '100'], '西局': [116.312747, 39.877025], '莲花桥': [116.316222, 39.902347],
+				 '纪家庙': [116.353416, 39.827359], '首经贸': [116.326613, 39.85032], '丰台站': [116.295648, 39.854462],
+				 '泥洼': [116.000001, 40.000001], '西局': [116.312747, 39.877025], '莲花桥': [116.316222, 39.902347],
 				 '西钓鱼台': [116.306415, 39.925659], '车道沟': [116.306391, 39.952454], '长春桥': [116.300448, 39.963198],
 				 '火器营': [116.293443, 39.971527], '大钟寺': [116.326642, 39.96292], '五道口': [116.346355, 39.991042],
 				 '上地': [116.321306, 40.041169], '西二旗': [116.315053, 40.06149], '龙泽': [116.330635, 40.07754],
 				 '回龙观': [116.338644, 40.08243], '北苑': [116.427719, 40.03445], '望京西': [116.453997, 40.000755],
 				 '光熙门': [116.438824, 39.974318], '柳芳': [116.44511, 39.961223], '永定门外': [116.409196, 39.872934],
 				 '景泰': [104.069444, 37.187406], '方庄': [116.438453, 39.865144], '北工大西门': [116.420498, 39.908814],
-				 '枣营': ['100', '100'], '东风北桥': [116.494341, 39.96362], '将台': [116.536017, 39.986811],
-				 '望京南': [116.489347, 40.00241], '阜通': ['100', '100'], '望京': [116.489347, 40.00241],
+				 '枣营': [116.48155, 39.950188], '东风北桥': [116.494341, 39.96362], '将台': [116.536017, 39.986811],
+				 '望京南': [116.489347, 40.00241], '阜通': [116.477642, 39.997887], '望京': [116.489347, 40.00241],
 				 '东湖渠': [116.468512, 40.011477], '来广营': [116.479153, 40.001566], '善各庄': [116.490034, 40.032611],
 				 '张郭庄': [116.202973, 39.854011], '园博园': [116.196619, 39.882144], '大瓦窑': [116.235286, 39.862412],
 				 '郭庄子': [116.267079, 39.873678], '大井': [116.280742, 39.877991], '俸伯': [116.724595, 40.142113],
@@ -128,6 +137,8 @@ site_location = {'苹果园': [116.189634, 39.934641], '古城': [100.23248, 26.
 				 '孙河': [116.546719, 40.057928], '马泉营': [116.515813, 40.043889], '崔各庄': [116.468636, 40.055808],
 				 '关庄': [116.440955, 40.008748], '安立路': [116.414411, 40.025849], '北沙滩': [116.380989, 40.010688],
 				 '六道口': [116.476852, 39.854528], '清华东路西口': [116.344839, 40.006275]}
+
+##接口返回值
 site = {
 	'北京地铁1号线': ['苹果园', '古城', '八角游乐园', '八宝山', '玉泉路', '五棵松', '万寿路', '公主坟', '军事博物馆', '木樨地', '南礼士路', '复兴门', '西单', '天安门西',
 				'天安门东', '王府井', '东单', '建国门', '永安里', '国贸', '大望路', '四惠', '四惠东'],
@@ -161,14 +172,19 @@ site = {
 def geo_distance(origin, destination):
 	lng1, lat1 = origin
 	lng2, lat2 = destination
-	redius = 300  # km
+	redius = 6371  # km
 	dlat = math.radians(lat2 - lat1)
 	dlng = math.radians(lng2 - lng1)
-	a = (math.sin(dlat / 2) * math.sin(dlat / 2)) + math.cos(
-		math.radians(lat1) * math.cos(math.radians(lat2)) * math.sin(dlng / 2) * math.sin(dlng / 2))
-	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-	d = redius * c
-	return d
+	a = (math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat2)*math.radians(lat1)) * math.sin(dlng / 2) ** 2)
+	c = 2 * math.asin(math.sqrt(a))*redius*1000
+	c=round(c/1000,3)
+	# d = redius * c
+	return c
+
+
+def get_geo_distance(site1, site2):
+	print(tuple(site_location[site1]), tuple(site_location[site2]))
+	return geo_distance(tuple(site_location[site1]), tuple(site_location[site2]))
 
 
 # import networkx as nx
@@ -191,14 +207,10 @@ from matplotlib.font_manager import FontProperties
 
 import collections
 
-
-def route_lines(start, end, types):
-	pass
-
-
 site_connection = collections.defaultdict(list)
 
 
+##转换线路站点site信息 使成为 site_connection[站点:[相邻的站点...]...]的结构
 def values_sort():
 	for values in site.values():
 		for x in range(len(values) - 1):
@@ -223,16 +235,71 @@ def bfs(graph, start, end):
 			if behinder == end:
 				break
 			else:
-				#visited.append(behinder)
+				# visited.append(behinder)
 
-				visited=visited+[behinder]
+				visited = visited + [behinder]
 		seen.append(front)
 	seen.append(end)
 	return seen
 
+
+def search(start, dest, connection_graph):
+	path_right_dataset = []
+	paths = [[start]]
+	visited = set()
+	while paths:
+		path = paths.pop(0)
+		froninter = path[-1]
+		if froninter in visited:
+			continue
+		successor = connection_graph[froninter]
+		for new_subway_station in successor:
+			if new_subway_station in path:
+				continue
+			new_path = path + [new_subway_station]
+
+			if new_subway_station == dest:
+				path_right_dataset.append(new_path)
+			else:
+				paths.append(new_path)
+		visited.add(froninter)
+
+	return path_right_dataset
+
+
 def main():
 	values_sort()
-	print(bfs(site_connection,['回龙观东大街'],'人民大学'))
+	print(bfs(site_connection, '回龙观东大街', '人民大学'))
+	ways = search('回龙观东大街', '北土城', site_connection)
+	print(ways)
+	least_transfer_way = []
+	distance_list = []
+	for way in ways:
+		distance = 0
+		for i in range(len(way) - 2):
+			distance += get_geo_distance(way[i], way[i + 1])
+		distance_list.append(distance)
+
+		if len(way) < len(least_transfer_way):
+			least_transfer_way = way
+		else:
+			if len(least_transfer_way) == 0:
+				least_transfer_way = way
+			continue
+
+	shortest_way_order_num = 0
+	tmp_number = 0
+	for i in range(len(distance_list) - 1):
+		if distance_list[i] < tmp_number:
+			tmp_number = distance_list
+			shortest_way_order_num = i
+		else:
+			if tmp_number == 0:
+				tmp_number = distance_list[i]
+				shortest_way_order_num = i
+			continue
+	print("最少换乘选择 L:{}".format(least_transfer_way))
+	print("最短距离选择 S:{}".format(ways[shortest_way_order_num]))
 
 
 if __name__ == '__main__':
