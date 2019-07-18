@@ -1,0 +1,26 @@
+
+Why do we use Derivative / Gredient to fit a target function?¶
+Ans:因为难以通过固定的回合数获取目标函数，需要的是逐步渐进的不确定量级的计算过程
+
+In the words 'Gredient Descent', what's the Gredient and what's the Descent?¶
+Ans: 下降的是loss函数的值 ，梯度是步长变化
+
+What's the advantages of the 3rd gradient descent method compared to the previous methods?
+Ans:下降方向明确，下降快，不走弯路
+
+Using the simple words to describe: What's the machine leanring.¶
+Ans: 通过大量数据计算函数模型
+
+Why do we need dynamic programming? What's the difference of dynamic programming and previous talked search problme?
+动态规划以层扩展和计算，始终以当前点为初始点计算，简单；另一个课上讲的bfs和dfs，是需要要依赖之前点的连线，不断的向外扩散
+bfs和dfs类似放射的线，从起点开始放射，扩散，而动态规划类似始终是多个线段相加，每次只计算线段，最终汇总即可
+Why do we still need dynamic programming? Why not we train a machine learning to fit a function which could get the right answer based on inputs?
+
+Can you catch up at least 3 problems which could solved by Dynamic Programming?
+
+Can you catch up at least 3 problems wich could sloved by Edit Distance?
+
+
+Please summarize the three main features of Dynamic Programming, and make a concise explain for each feature.
+
+What's the disadvantages of Dynamic Programming? (You may need search by yourself in Internet)
