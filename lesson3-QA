@@ -12,15 +12,15 @@ Using the simple words to describe: What's the machine leanring.¶
 Ans: 通过大量数据计算函数模型
 
 Why do we need dynamic programming? What's the difference of dynamic programming and previous talked search problme?
-动态规划以层扩展和计算，始终以当前点为初始点计算，简单；另一个课上讲的bfs和dfs，是需要要依赖之前点的连线，不断的向外扩散
-bfs和dfs类似放射的线，从起点开始放射，扩散，而动态规划类似始终是多个线段相加，每次只计算线段，最终汇总即可
+动态规划以层扩展和计算，始终以当前点为初始点计算，拆解成简单问题，最优子结构；另一个课上讲的bfs和dfs，是需要要依赖之前点的连线，不断的向外扩散
+bfs和dfs类似放射的线，从起点开始放射，扩散，而动态规划类似始终是多个线段相加，每次只计算Best线段，最终Best汇总即可
 Why do we still need dynamic programming? Why not we train a machine learning to fit a function which could get the right answer based on inputs?
-
+解决某些复杂问题比较优秀呗；过于复杂的模型可能泛化程度低吧
 Can you catch up at least 3 problems which could solved by Dynamic Programming?
-
+最短行程问题，数据包含固定属性的组合问题，有状态转换的多阶段性问题
 Can you catch up at least 3 problems wich could sloved by Edit Distance?
-
 
 Please summarize the three main features of Dynamic Programming, and make a concise explain for each feature.
 
 What's the disadvantages of Dynamic Programming? (You may need search by yourself in Internet)
+消耗空间大 ，数据量过大可能需要降维处理
